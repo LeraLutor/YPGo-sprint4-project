@@ -2,6 +2,7 @@ package spentcalories
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -68,10 +69,6 @@ func meanSpeed(steps int, height float64, duration time.Duration) float64 {
 	distanceInKm := distance(steps, height)
 
 	return distanceInKm / duration.Hours()
-}
-
-func TrainingInfo(data string, weight, height float64) (string, error) {
-	// TODO: реализовать функцию
 }
 
 // расчет калоррий при беге
@@ -141,4 +138,64 @@ func WalkingSpentCalories(steps int, weight, height float64, duration time.Durat
 	calories *= walkingCaloriesCoefficient
 
 	return calories, nil
+}
+
+// информация о тренировке
+func TrainingInfo(data string, weight, height float64) (string, error) {
+	// считывание данных о тренировке
+	steps, trainingType, duration, err := parseTraining(data)
+	// проверка на ошибку считывания
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	var calories float64
+
+	// проаерка к какому типу относится тренировка и подсчет ее значений в зависимости от типа
+	switch trainingType {
+	case "Бег":
+		calories, err = RunningSpentCalories(
+			steps,
+			weight,
+			height,
+			duration,
+		)
+	case "Ходьба":
+		calories, err = WalkingSpentCalories(
+			steps,
+			weight,
+			height,
+			duration,
+		)
+	// проверка, если тренировка не относится к хотьбе и бегу
+	default:
+		return "", fmt.Errorf("Неизвестный тип тренировки")
+	}
+
+	// проверка на ошибки после типа тренировки
+	if err != nil {
+		return "", err
+	}
+
+	// определение дистанции
+	distanceInKm := distance(steps, height)
+	// определенние скорости
+	speed := meanSpeed(steps, height, duration)
+
+	// сбор информации о тренровке
+	info := fmt.Sprintf(
+		"Тип тренировки: %s\n"+
+			"Длительность: %.2f ч.\n"+
+			"Дистанция: %.2f км.\n"+
+			"Скорость: %.2f км/ч\n"+
+			"Сожгли калорий: %.2f",
+		trainingType,
+		duration.Hours(),
+		distanceInKm,
+		speed,
+		calories,
+	)
+
+	return info, nil
 }
