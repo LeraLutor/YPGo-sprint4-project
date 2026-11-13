@@ -57,16 +57,54 @@ func distance(steps int, height float64) float64 {
 	return distanceInMeters / mInKm
 }
 
+// подсчет средней скорости в км/ч
 func meanSpeed(steps int, height float64, duration time.Duration) float64 {
-	// TODO: реализовать функцию
+	// проверка на длительность тренировки
+	if duration <= 0 {
+		return 0
+	}
+
+	// подсчет дистанции
+	distanceInKm := distance(steps, height)
+
+	return distanceInKm / duration.Hours()
 }
 
 func TrainingInfo(data string, weight, height float64) (string, error) {
 	// TODO: реализовать функцию
 }
 
+// расчет калоррий при беге
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// TODO: реализовать функцию
+	// проверка колва шагов
+	if steps <= 0 {
+		return 0, fmt.Errorf("Количество шагов должно быть больше нуля")
+	}
+
+	// проверка веса
+	if weight <= 0 {
+		return 0, fmt.Errorf("Вес должен быть больше нуля")
+	}
+
+	// проверка роста
+	if height <= 0 {
+		return 0, fmt.Errorf("Рост должен быть больше нуля")
+	}
+
+	// проверка длительности тренировки
+	if duration <= 0 {
+		return 0, fmt.Errorf("Длительность тренировки должна быть больше нуля")
+	}
+
+	// расчет средней скорости
+	speed := meanSpeed(steps, height, duration)
+	// длительность тренировки в минуты
+	durationInMinutes := duration.Minutes()
+
+	// подсчет калорий
+	calories := weight * speed * durationInMinutes / minInH
+
+	return calories, nil
 }
 
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
