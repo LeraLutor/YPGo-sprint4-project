@@ -24,21 +24,30 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	// проверка на длину заданных данных
 	if len(parts) != 3 {
-		return 0, "", 0, fmt.Errorf("Неверный формат данных: ожидается количество шагов, тип тренировки и длительность")
+		return 0, "", 0, fmt.Errorf("неверный формат данных: ожидается количество шагов, тип тренировки и длительность")
 	}
 
 	// колво шагов в int
 	steps, err := strconv.Atoi(parts[0])
 	// проверка на ошибку данных
 	if err != nil {
-		return 0, "", 0, fmt.Errorf("Не удалось прочитать количество шагов: %w", err)
+		return 0, "", 0, fmt.Errorf("не удалось прочитать количество шагов: %w", err)
+	}
+	// проверка на 0
+	if steps <= 0 {
+		return 0, "", 0, fmt.Errorf("количество шагов должно быть больше нуля")
 	}
 
 	// преобразование длительности
 	duration, err := time.ParseDuration(parts[2])
 	// проверка на ошибку преобразования длительности
 	if err != nil {
-		return 0, "", 0, fmt.Errorf("Не удалось прочитать длительность тренировки: %w", err)
+		return 0, "", 0, fmt.Errorf("не удалось прочитать длительность тренировки: %w", err)
+	}
+
+	// проверка на длительность
+	if duration <= 0 {
+		return 0, "", 0, fmt.Errorf("длительность тренировки должна быть больше нуля")
 	}
 
 	// приравнивание типа тренировки
@@ -174,7 +183,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 		)
 	// проверка, если тренировка не относится к хотьбе и бегу
 	default:
-		return "", fmt.Errorf("Неизвестный тип тренировки")
+		return "", fmt.Errorf("неизвестный тип тренировки")
 	}
 
 	// проверка на ошибки после типа тренировки
@@ -193,7 +202,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 			"Длительность: %.2f ч.\n"+
 			"Дистанция: %.2f км.\n"+
 			"Скорость: %.2f км/ч\n"+
-			"Сожгли калорий: %.2f",
+			"Сожгли калорий: %.2f\n",
 		trainingType,
 		duration.Hours(),
 		distanceInKm,
