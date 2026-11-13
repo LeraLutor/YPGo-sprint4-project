@@ -16,6 +16,7 @@ const (
 	walkingCaloriesCoefficient = 0.5  // коэффициент для расчета калорий при ходьбе
 )
 
+// парсинг тренировки
 func parseTraining(data string) (int, string, time.Duration, error) {
 	// строка делится на слайс
 	parts := strings.Split(data, ",")
@@ -45,8 +46,15 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	return steps, trainingType, duration, nil
 }
 
+// подсчет пройденной дистанции в км
 func distance(steps int, height float64) float64 {
-	// TODO: реализовать функцию
+	// расчет длины шага
+	stepLength := height * stepLengthCoefficient
+
+	// подсчет длины в метрах
+	distanceInMeters := float64(steps) * stepLength
+
+	return distanceInMeters / mInKm
 }
 
 func meanSpeed(steps int, height float64, duration time.Duration) float64 {
