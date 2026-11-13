@@ -1,6 +1,7 @@
 package daysteps
 
 import (
+	"YPGo-sprint4-project/internal/spentcalories"
 	"fmt"
 	"strconv"
 	"strings"
@@ -14,6 +15,7 @@ const (
 	mInKm = 1000
 )
 
+// парсинг тренировки
 func parsePackage(data string) (int, time.Duration, error) {
 	// строка делится на слайс
 	parts := strings.Split(data, ",")
@@ -45,6 +47,46 @@ func parsePackage(data string) (int, time.Duration, error) {
 	return steps, duration, nil
 }
 
+// инфо об активных днях
 func DayActionInfo(data string, weight, height float64) string {
-	// TODO: реализовать функцию
+	// // считывание данных о тренировкt
+	steps, duration, err := parsePackage(data)
+	// проверка на ошибку считывания
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	// проверка на отсутсвие шагов
+	if steps <= 0 {
+		return ""
+	}
+
+	// подсчет дистанции
+	distanceInMeters := float64(steps) * stepLength
+	// перевод в км
+	distanceInKm := distanceInMeters / mInKm
+
+	// подсчет калорий
+	calories, err := spentcalories.WalkingSpentCalories(
+		steps,
+		weight,
+		height,
+		duration,
+	)
+	// проверка на ошибки
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	// вывод
+	return fmt.Sprintf(
+		"Количество шагов: %d.\n"+
+			"Дистанция составила %.2f км.\n"+
+			"Вы сожгли %.2f ккал.",
+		steps,
+		distanceInKm,
+		calories,
+	)
 }
