@@ -212,3 +212,5 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 
 	return info, nil
 }
+
+//
