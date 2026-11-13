@@ -49,8 +49,12 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 // подсчет пройденной дистанции в км
 func distance(steps int, height float64) float64 {
+	stepLength := lenStep
+
 	// расчет длины шага
-	stepLength := height * stepLengthCoefficient
+	if height != 0 {
+		stepLength = height * stepLengthCoefficient
+	}
 
 	// подсчет длины в метрах
 	distanceInMeters := float64(steps) * stepLength
